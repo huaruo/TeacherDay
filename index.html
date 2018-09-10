@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Happy Teacher's Day</title>
+    <title>Happy Techer's Day</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <!--<meta itemprop="image" content="./images/fenxiang.png" />-->
@@ -134,7 +134,7 @@
             S.Drawing.init('.canvas');
             document.body.classList.add('body--ready');
 			//想说的话
-            S.UI.simulate("宝贝|Happy|Techer's|Day|#countdown 3|#❤️");
+            S.UI.simulate("宝贝|节|日|快|乐|#countdown 3|#❤️");
             S.Drawing.loop(function () {
                 S.Shape.render();
             });
@@ -667,8 +667,60 @@
     }());
     S.init();
 </script>
-<audio  autoplay="autoplay" src="http://other.web.ra01.sycdn.kuwo.cn/resource/n1/128/65/35/2593026644.mp3" loop="loop" controls="controls">
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<audio  id="voice" autoplay="autoplay" src="http://other.web.ra01.sycdn.kuwo.cn/resource/n1/128/65/35/2593026644.mp3" loop="loop" controls="controls">
 当前浏览器不支持音乐播放
 </audio>
+<script>
+    $(document).ready(function() {
+        var voice = document.getElementById('voice');
+        //调用 <audio> 元素提供的方法 play()
+        voice.play();
+        //判斷 WeixinJSBridge 是否存在
+        if (typeof WeixinJSBridge == "object" && typeof WeixinJSBridge.invoke == "function") {
+            voice.play();
+        } else {
+            //監聽客户端抛出事件"WeixinJSBridgeReady"
+            if (document.addEventListener) {
+                document.addEventListener("WeixinJSBridgeReady", function() {
+                    voice.play();
+                }, false);
+            } else if (document.attachEvent) {
+                document.attachEvent("WeixinJSBridgeReady", function() {
+                    voice.play();
+                });
+                document.attachEvent("onWeixinJSBridgeReady", function() {
+                    voice.play();
+                });
+            }
+        }
+
+        //voiceStatu用來記録狀態,使 touchstart 事件只能觸發一次有效,避免與 click 事件衝突
+        var voiceStatu = true;
+        //监听 touchstart 事件进而调用 <audio> 元素提供的 play() 方法播放音频
+        document.addEventListener("touchstart", function(e) {
+            if (voiceStatu) {
+                voice.play();
+                voiceStatu = false;
+            }
+        }, false);
+
+
+        $('.musicPlay').click(function() {
+            // 依據 audio 的 paused 属性返回音频是否已暂停來判斷播放還是暫停音频。
+            if (voice.paused) {
+                voice.play();
+                $('.musicPlay>p>img').attr('src', 'http://upload-images.jianshu.io/upload_images/6171922-4d23a92a9c256d0d.gif?imageMogr2/auto-orient/strip');
+            } else {
+                voice.pause();
+                $('.musicPlay>p>img').attr('src', 'http://upload-images.jianshu.io/upload_images/6171922-e5206046b43e1efe.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240');
+            }
+        });
+        //监听浏览器能够开始播放这段音频时，发生的 canplay 事件来获取 <audio> 元素的 duration 属性.
+        $("#voice").on("canplay", function() {
+            $(".musicPlay>p>span>em").html(parseInt(voice.duration)+'" ');
+        });
+    });
+</script>
 </body>
 </html>
